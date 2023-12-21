@@ -14,31 +14,32 @@
   <body>
     <div class="container p-5 my-5 shadow">
       <h1 class="fw-bold">Add new student record</h1>
-      <form action="#" class="mt-4">
-        <label for="firstname" class="form-label">First Name:</label>
-        <input id="firstname" type="text" class="form-control" required />
+      <label for="firstname" class="form-label">First Name:</label>
+      <input id="firstname" type="text" class="form-control" required />
 
-        <label for="lastname" class="form-label">Last Name:</label>
-        <input id="lastname" type="text" class="form-control" required />
+      <label for="lastname" class="form-label">Last Name:</label>
+      <input id="lastname" type="text" class="form-control" required />
 
-        <label for="batch" class="form-label">Batch:</label>
-        <input id="batch" type="number" class="form-control" min="1" required />
+      <label for="batch" class="form-label">Batch:</label>
+      <input id="batch" type="number" class="form-control" min="1" required />
 
-        <label for="grade" class="form-label">Grade:</label>
-        <input
-          id="grade"
-          type="number"
-          class="form-control"
-          min="1"
-          max="100"
-          required
-        />
+      <label for="grade" class="form-label">Grade:</label>
+      <input
+        id="grade"
+        type="number"
+        class="form-control"
+        min="1"
+        max="100"
+        required
+      />
 
-        <button class="btn btn-dark mt-3" type="submit">+ Add Record</button>
-      </form>
+      <button class="btn btn-dark mt-3" type="submit" id="newStudentForm">
+        + Add Record
+      </button>
     </div>
 
     <div class="container p-5 shadow">
+      <h1 class="fw-bold">Students</h1>
       <table class="table" id="datatable">
         <thead>
           <th>First Name</th>
@@ -58,6 +59,7 @@
         getFirestore,
         collection,
         onSnapshot,
+        addDoc,
       } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
       // TODO: Add SDKs for Firebase products that you want to use
       // https://firebase.google.com/docs/web/setup#available-libraries
@@ -81,6 +83,7 @@
       let tableBody = document.getElementById("tableArea");
 
       onSnapshot(collection(db, "students"), (snapshot) => {
+        tableBody.innerHTML = "";
         snapshot.forEach((student) => {
           let studentRow = `<tr>
                 <td>${student.data().firstname}</td>
@@ -92,6 +95,23 @@
           tableBody.innerHTML += studentRow;
         });
       });
+
+      document
+        .getElementById("newStudentForm")
+        .addEventListener("click", () => {
+          const firstname = document.getElementById("firstname").value;
+          const lastname = document.getElementById("lastname").value;
+          const grade = document.getElementById("grade").value;
+          const batch = document.getElementById("batch").value;
+
+          //   adding a new document to the collection. automatic update to the UI
+          addDoc(collection(db, "students"), {
+            firstname: firstname,
+            lastname: lastname,
+            grade: grade,
+            batch: batch,
+          });
+        });
     </script>
   </body>
 </html>
